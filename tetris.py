@@ -180,7 +180,7 @@ class Tetris:
 
 	def __next(self,buttons=()):
 		if 1 in buttons:
-			self.__sound.append(1)
+			
 			self.__current_rotation = (self.__current_rotation+1) % 4 
 			copy = self.__rotate(self.__current_brick_pos)
 			try:
@@ -188,12 +188,12 @@ class Tetris:
 					assert i[0]>=0 and i[1]>=0 and i[1]<self.height and i[0]<10, "borders"
 					assert not self.__felled_array[i[0]][i[1]], "Hit something"
 				self.__current_brick_pos = copy.copy()
+				self.__sound.append(1)
 			except AssertionError:
 				self.__current_rotation = (self.__current_rotation-1) % 4 
 				pass
 
 		if -1 in buttons:
-			self.__sound.append(1)
 			self.__current_rotation = (self.__current_rotation+1) % 4 
 			copy = self.__rotate(self.__current_brick_pos)
 
@@ -202,6 +202,8 @@ class Tetris:
 
 			self.__current_rotation = (self.__current_rotation+1) % 4 
 			copy = self.__rotate(copy)	
+			self.__sound.append(1)
+
 
 			try:
 				for i in copy:
