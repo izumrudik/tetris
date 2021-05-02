@@ -124,6 +124,7 @@ class Tetris:
 		if not self.__delete_lines:
 			return 0
 		self.__sound.append(2)
+		self.__delete_lines.sort(reverse=True)
 		for line_to_delete in self.__delete_lines:
 			
 			for line_to_move in range(line_to_delete,self.height-1):
