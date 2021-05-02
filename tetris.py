@@ -223,8 +223,8 @@ class Tetris:
 			self.__move_brick()
 			self.__frames_passed = 0
 		if 2 in buttons: 
-			self.__delete_if_possible()
-			#self.__move_brick()
+			#self.__delete_if_possible()
+			self.__move_brick()
 		if 3 in buttons: self.__move_brick_by(-1)
 		if 4 in buttons: self.__move_brick_by(1)
 		
