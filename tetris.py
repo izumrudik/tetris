@@ -30,7 +30,7 @@ class Tetris:
 		self.__main_array = [
 			[ 0 for j in range(height) ] for i in range(10)
 		]
-		self.__score = 0
+		self.__lines_breaked = 0
 		self.__felled_array = [
 			[ 0 for j in range(height) ] for i in range(10)
 		]
@@ -124,7 +124,7 @@ class Tetris:
 	def __delete_if_possible(self):
 		if not self.__delete_lines:
 			return 0
-		self.__score +=1000
+		self.__lines_breaked +=1
 		self.__sound.append(2)
 		self.__delete_lines.sort(reverse=True)
 		for line_to_delete in self.__delete_lines:
@@ -228,6 +228,7 @@ class Tetris:
 		if 2 in buttons: 
 			#self.__delete_if_possible()
 			self.__move_brick()
+			self.__score+=1
 		if 3 in buttons: self.__move_brick_by(-1)
 		if 4 in buttons: self.__move_brick_by(1)
 		
@@ -354,7 +355,9 @@ class Tetris:
 	def button(self,value):
 		self.__buttons.append(value)
 
-
+	@property
+	def score(self):
+		return self.__score + 1000 * self.__lines_breaked
 
 	@property
 	def sound(self):
@@ -363,8 +366,8 @@ class Tetris:
 		return 0
 
 	@property
-	def score(self):
-		return self.__score
+	def lines_breaked(self):
+		return self.__lines_breaked
 
 	@property
 	def next_piece(self):
