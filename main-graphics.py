@@ -6,11 +6,11 @@ from threading import Thread
 from time import time
 import random
 
-VOLUME = 15#%
+VOLUME = 1#%
 ROWS = 15
-HEIGHT = 600  # высота игрового окна
+HEIGHT =900  # высота игрового окна
 WIDTH = int((HEIGHT/(ROWS))*10)  # ширина игрового окна
-
+TIME_FOR_FALL= 2#s
 FPS = 60 # частота кадров в секунду
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -25,7 +25,7 @@ ROATE_LEFT_BTN     = -1
 ROATE_RIGHT_BTN     = 1
 SCALE = int(WIDTH/10)
 
-
+HEIGHT = SCALE * ROWS
 sprites = {
 	0:BLACK,
 	1:(0,0,255),
@@ -87,10 +87,11 @@ class Window:
 			if event.type == pygame.QUIT:
 				self.running = False
 			if event.type == pygame.KEYDOWN:
+				
 				if event.key == pygame.K_q: self.tetris.button = ROATE_LEFT_BTN
 				if event.key == pygame.K_e: self.tetris.button = ROATE_RIGHT_BTN
 				if event.key == pygame.K_a: self.tetris.button = LEFT_BTN
-				if event.key == pygame.K_s: self.tetris.button = BOTTOM_BTN
+				if event.key in (pygame.K_s,pygame.K_j): self.tetris.button = BOTTOM_BTN
 				if event.key == pygame.K_d: self.tetris.button = RIGHT_BTN
 
 
@@ -138,22 +139,22 @@ class Window:
 			for y in range(len(main_array[x])):
 				self.drawRect(x,y, main_array[x][y])
 				
-
+		#убрать ненужные части
 		
 		pygame.display.flip()
 
 	def drawRect(self,x,y,type):
 
 		x = int(x*(SCALE))
-		y = int((ROWS-(y+1))*(SCALE/2))
+		y = int((ROWS-(y+1))*(SCALE))
 
 		#if type>0: type = random.randint(0,7)
 		pygame.draw.rect(self.screen,sprites.get(type,BLACK),(
 			x,
 			y,
 
-			x+SCALE,
-			y+SCALE
+			SCALE,
+			SCALE
 		
 			))
 
@@ -163,7 +164,7 @@ class Window:
 			self.draw()
 		pygame.quit()
 
-tetris = Tetris(ROWS)
+tetris = Tetris(ROWS,TIME_FOR_FALL*FPS)
 app = Window(tetris)
 
 

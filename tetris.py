@@ -26,17 +26,18 @@ from random import choice
 
 
 class Tetris:
-	def __init__(self,height=15,speed_frames=120):
+	def __init__(self,height=15,speed_frames=60):
 		self.__main_array = [
 			[ 0 for j in range(height) ] for i in range(10)
 		]
-
+		self.__score = 0
 		self.__felled_array = [
 			[ 0 for j in range(height) ] for i in range(10)
 		]
 		self.height = height
 		self.__sound = []
-		self.__pack = [1,2,3,4,5,6,7]
+		self.__sample_pack = [1,2,3,4,5,6,7]
+		self.__pack = self.__sample_pack.copy()
 		self.__next_piece = choice(self.__pack)
 		self.__pack.remove(self.__next_piece)
 		self.__buttons = []
@@ -123,6 +124,7 @@ class Tetris:
 	def __delete_if_possible(self):
 		if not self.__delete_lines:
 			return 0
+		self.__score +=1000
 		self.__sound.append(2)
 		self.__delete_lines.sort(reverse=True)
 		for line_to_delete in self.__delete_lines:
@@ -165,7 +167,7 @@ class Tetris:
 	def __swap_current_brick(self):
 		self.__check_for_lines()
 		self.__current_brick_type = self.__next_piece
-		if len(self.__pack) ==0: self.__pack = [1,2,3,4,5,6,7]
+		if len(self.__pack) ==0: self.__pack = self.__sample_pack.copy()
 		self.__next_piece = choice(self.__pack)
 		self.__pack.remove(self.__next_piece)
 	
