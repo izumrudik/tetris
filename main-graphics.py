@@ -165,8 +165,8 @@ class Window:
 		global WIDTH
 		global SCALE
 
-		HEIGHT_ = self.screen.get_height()
-		WIDTH_  = self.screen.get_width()
+		HEIGHT_ = self.screen.get_height() - Y_OFFSET_BRICKS
+		WIDTH_  = self.screen.get_width()  - X_OFFSET_BRICKS
 		
 		HEIGHT = HEIGHT_
 		WIDTH= int((HEIGHT/(ROWS))*10)  # ширина игрового окна
