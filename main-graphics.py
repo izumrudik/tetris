@@ -58,6 +58,17 @@ sprites = {
 }
 
 
+preview = {
+	1: pygame.image.load(join("resources","preview","1.png")),
+	2: pygame.image.load(join("resources","preview","2.png")),
+	3: pygame.image.load(join("resources","preview","3.png")),
+	4: pygame.image.load(join("resources","preview","4.png")),
+	5: pygame.image.load(join("resources","preview","5.png")),
+	6: pygame.image.load(join("resources","preview","6.png")),
+	7: pygame.image.load(join("resources","preview","7.png"))
+}
+
+
 sounds = {
 	1:pygame.mixer.Sound(join("resources","spin.wav"))
 
@@ -72,8 +83,7 @@ class Window:
 
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.RESIZABLE)
 
-		self.basic_font = pygame.font.SysFont(None, 24)
-
+		
 		pygame.display.set_caption("Tetris")
 		self.clock = pygame.time.Clock()
 		self.running = True
@@ -131,11 +141,33 @@ class Window:
 			for y in range(len(main_array[x])):
 				self.drawRect(x,y, main_array[x][y])
 				
-		#убрать ненужные части
-		self.lines_breaked_text = self.basic_font.render(f"LINES:{self.tetris.lines_breaked}", True, BLUE)
-		self.score_text = self.basic_font.render(f"SCORE:{self.tetris.score}", True, BLUE)
-		self.screen.blit(self.score_text, (20, 5))
-		self.screen.blit(self.lines_breaked_text, (20, 25))
+		#текст
+		font = pygame.font.SysFont(None, int(SCALE/2))
+
+		self.lines_breaked_text = font.render(f"LINES:{self.tetris.lines_breaked}", True, BLUE)
+		self.score_text = font.render(f"SCORE:{self.tetris.score}", True, BLUE)
+
+		self.screen.blit(self.score_text, (SCALE*5, 0))
+		self.screen.blit(self.lines_breaked_text, (SCALE*5, SCALE*0.4))
+		
+
+
+		#превью следуйщего блока
+		spr = pygame.transform.scale(preview[self.tetris.next_piece],
+		(
+			{1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.next_piece],
+			{1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.next_piece]
+		
+		
+		)
+		)
+		self.screen.blit(spr,(
+
+			spr.get_rect(topleft=(
+				SCALE * 10, Y_OFFSET_BRICKS
+			))
+
+		))
 		
 		pygame.display.flip()
 
@@ -164,17 +196,20 @@ class Window:
 		global HEIGHT
 		global WIDTH
 		global SCALE
-
-		HEIGHT_ = self.screen.get_height() - Y_OFFSET_BRICKS
-		WIDTH_  = self.screen.get_width()  - X_OFFSET_BRICKS
+		global X_OFFSET_BRICKS
+		global Y_OFFSET_BRICKS
+		HEIGHT_ = self.screen.get_height() 
+		WIDTH_  = self.screen.get_width()  * 1
 		
-		HEIGHT = HEIGHT_
+		HEIGHT = HEIGHT_ * 0.95
 		WIDTH= int((HEIGHT/(ROWS))*10)  # ширина игрового окна
 		SCALE = int(WIDTH/10)
 		HEIGHT = int(SCALE * ROWS)
 
+		X_OFFSET_BRICKS = 0
+		Y_OFFSET_BRICKS = int(HEIGHT_ * 0.05)
 
-		self.screen = pygame.display.set_mode((WIDTH+X_OFFSET_BRICKS, HEIGHT+Y_OFFSET_BRICKS),pygame.RESIZABLE)
+		self.screen = pygame.display.set_mode((WIDTH+X_OFFSET_BRICKS+2*SCALE, HEIGHT+Y_OFFSET_BRICKS),pygame.RESIZABLE)
 			
 
 		

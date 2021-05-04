@@ -54,8 +54,8 @@ class Tetris:
 		self.__delete_lines = []
 		self.__current_rotation = 0
 
-	
-	
+
+
 # 1 :bar                color
 # 2 :L                  color
 # 3 :J                  color
@@ -65,7 +65,7 @@ class Tetris:
 # 7 :brick              color
 
 
-		
+
 
 	def __die(self):
 		self.__current_brick_pos = []
@@ -95,7 +95,7 @@ class Tetris:
 
 		except AssertionError:#hit ground
 			pass
- 
+
 	def __move_brick(self):
 
 
@@ -117,7 +117,7 @@ class Tetris:
 		
 
 		except AssertionError:#hit ground
-			for i in self.__current_brick_pos:	
+			for i in self.__current_brick_pos:
 				self.__felled_array[i[0]][i[1]] = self.__current_brick_type # add brick
 			self.__swap_current_brick()
 
@@ -127,7 +127,7 @@ class Tetris:
 		self.__sound.append(2)
 		self.__delete_lines.sort(reverse=True)
 		for line_to_delete in self.__delete_lines:
-			self.__lines_breaked +=1		
+			self.__lines_breaked +=1
 			for line_to_move in range(line_to_delete,self.height-1):
 				for x in range(len(self.__felled_array)):
 					self.__felled_array[x][line_to_move] = self.__felled_array[x][line_to_move+1]
@@ -174,7 +174,7 @@ class Tetris:
 		try:
 			for i in self.__current_brick_pos: #move
 				assert not self.__felled_array[i[0]][i[1]], "Hit something"
-    
+
 		except AssertionError:
 			self.__die()
 
@@ -203,7 +203,7 @@ class Tetris:
 			copy = self.__rotate(copy)
 
 			self.__current_rotation = (self.__current_rotation+1) % 4 
-			copy = self.__rotate(copy)	
+			copy = self.__rotate(copy)
 			self.__sound.append(1)
 
 
@@ -241,9 +241,9 @@ class Tetris:
 		
 		for i in self.__current_brick_pos:
 			copy[i[0]][i[1]] = self.__current_brick_type
-			
-			
-			
+
+
+
 		self.__main_array = copy
 
 
@@ -279,7 +279,7 @@ class Tetris:
 		
 		pos = brick_pos
 		copy = [i.copy() for i in brick_pos]
-		
+
 
 		if self.__current_brick_type == 1:#bar #works
 			if self.__current_rotation==0: copy = [ [pos[0][0]-2,pos[0][1]-1] ,[pos[1][0]-1,pos[1][1]], [pos[2][0],pos[2][1]+1],[pos[3][0]+1,pos[3][1]+2] ]
