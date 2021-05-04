@@ -124,11 +124,10 @@ class Tetris:
 	def __delete_if_possible(self):
 		if not self.__delete_lines:
 			return 0
-		self.__lines_breaked +=1
 		self.__sound.append(2)
 		self.__delete_lines.sort(reverse=True)
 		for line_to_delete in self.__delete_lines:
-			
+			self.__lines_breaked +=1		
 			for line_to_move in range(line_to_delete,self.height-1):
 				for x in range(len(self.__felled_array)):
 					self.__felled_array[x][line_to_move] = self.__felled_array[x][line_to_move+1]
@@ -226,9 +225,10 @@ class Tetris:
 			self.__move_brick()
 			self.__frames_passed = 0
 		if 2 in buttons: 
-			#self.__delete_if_possible()
+			self.__delete_if_possible()
 			self.__move_brick()
 			self.__score+=1
+			self.__frames_passed = 0
 		if 3 in buttons: self.__move_brick_by(-1)
 		if 4 in buttons: self.__move_brick_by(1)
 		
