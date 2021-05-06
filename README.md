@@ -5,3 +5,6 @@ starts game in the console. (pynput is needed)
 
 * main-graphics.py
 starts game in window. (pygame isneeded)
+
+* bot.py
+starts game, but bot is playing
