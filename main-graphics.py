@@ -1,4 +1,3 @@
-#%% 
 from tetris import Tetris
 import pygame
 import random
@@ -225,11 +224,11 @@ class Window:
 			
 
 		
+def run():
+	tetris = Tetris(ROWS,TIME_FOR_FALL*FPS)
+	app = Window(tetris)
+	app.run()
 
-tetris = Tetris(ROWS,TIME_FOR_FALL*FPS)
-app = Window(tetris)
 
-
-app.run()
-
-# %%
+if __name__ == "__main__":
+	run()
