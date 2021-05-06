@@ -13,7 +13,7 @@
 #0 - nothing
 #1 - rotate
 #2 - clear line
-
+#3 - can't swap
 
 #button annotation:
 # -1-rotate-left
@@ -21,6 +21,7 @@
 # 2-bottom
 # 3-right
 # 4-left
+# 5 -hlod
 
 from random import choice
 
@@ -53,7 +54,8 @@ class Tetris:
 		self.__score = 0
 		self.__delete_lines = []
 		self.__current_rotation = 0
-
+		self.__holded = 0
+		self.__hold_allowed = True
 
 
 # 1 :bar                color
@@ -164,6 +166,7 @@ class Tetris:
 
 
 	def __swap_current_brick(self):
+		
 		self.__check_for_lines()
 		self.__current_brick_type = self.__next_piece
 		if len(self.__pack) ==0: self.__pack = self.__sample_pack.copy()
@@ -171,6 +174,9 @@ class Tetris:
 		self.__pack.remove(self.__next_piece)
 	
 		self.__make_pos()
+
+		self.__hold_allowed = True
+
 		try:
 			for i in self.__current_brick_pos: #move
 				assert not self.__felled_array[i[0]][i[1]], "Hit something"
@@ -181,41 +187,23 @@ class Tetris:
 
 
 	def __next(self,buttons=()):
-		if 1 in buttons:
-			
-			self.__current_rotation = (self.__current_rotation+1) % 4 
-			copy = self.__rotate(self.__current_brick_pos)
+		if 1 in buttons:#rotate right
+			self.__current_rotation = (self.__current_rotation+1) % 4;copy = self.__rotate(self.__current_brick_pos)
 			try:
-				for i in copy:
-					assert i[0]>=0 and i[1]>=0 and i[1]<self.height and i[0]<10, "borders"
-					assert not self.__felled_array[i[0]][i[1]], "Hit something"
-				self.__current_brick_pos = copy.copy()
-				self.__sound.append(1)
-			except AssertionError:
-				self.__current_rotation = (self.__current_rotation-1) % 4 
-				pass
+				for i in copy:assert i[0]>=0 and i[1]>=0 and i[1]<self.height and i[0]<10, "borders";assert not self.__felled_array[i[0]][i[1]], "Hit something";
+				self.__current_brick_pos = copy.copy();self.__sound.append(1)
+			except AssertionError:self.__current_rotation = (self.__current_rotation-1) % 4 
 
-		if -1 in buttons:
-			self.__current_rotation = (self.__current_rotation+1) % 4 
-			copy = self.__rotate(self.__current_brick_pos)
-
-			self.__current_rotation = (self.__current_rotation+1) % 4 
-			copy = self.__rotate(copy)
-
-			self.__current_rotation = (self.__current_rotation+1) % 4 
-			copy = self.__rotate(copy)
-			self.__sound.append(1)
-
-
+		if -1 in buttons:#rotate left
+			self.__current_rotation = (self.__current_rotation+1) % 4;copy = self.__rotate(self.__current_brick_pos);self.__current_rotation = (self.__current_rotation+1) % 4;copy = self.__rotate(copy);self.__current_rotation = (self.__current_rotation+1) % 4;copy = self.__rotate(copy);self.__sound.append(1)
 			try:
-				for i in copy:
-					assert i[0]>=0 and i[1]>=0 and i[1]<self.height and i[0]<10, "borders"
-					assert not self.__felled_array[i[0]][i[1]], "Hit something"
-					
+				for i in copy: assert i[0]>=0 and i[1]>=0 and i[1]<self.height and i[0]<10, "borders"; assert not self.__felled_array[i[0]][i[1]], "Hit something"
 				self.__current_brick_pos = copy.copy()
-			except AssertionError:
-				self.__current_rotation = (self.__current_rotation-3) % 4 
-				pass
+			except AssertionError:self.__current_rotation = (self.__current_rotation-3) % 4 
+
+		if 5 in buttons:#hold
+			self.__hold()
+
 
 
 
@@ -339,6 +327,27 @@ class Tetris:
 
 
 
+	def __hold(self):
+		if not self.__hold_allowed:
+			self.__sound.append(3)
+			return
+
+		if not self.__holded:
+			self.__holded = self.__current_brick_type 
+			self.__swap_current_brick()
+			self.__hold_allowed = False
+			return 
+
+		
+
+		self.__holded,self.__current_brick_type = self.__current_brick_type, self.__holded
+		self.__make_pos()
+		
+		self.__hold_allowed = False
+
+		
+
+
 
 
 
@@ -347,35 +356,48 @@ class Tetris:
 # acceseble
 
 
-	@property
-	def button(self):
-		return self.__buttons
+	@property#for setter
+	def button(self):#for setter
+		return self.__buttons#for setter
 	
-	@button.setter
+	@button.setter#to push buttons
 	def button(self,value):
 		self.__buttons.append(value)
 
+
+
+
 	@property
-	def score(self):
+	def score(self):#to get score
 		return self.__score + 1000 * self.__lines_breaked
 
 	@property
-	def sound(self):
+	def sound(self):#to get sound
 		if len(self.__sound) >=1:
 			return self.__sound.pop(0)	
 		return 0
 
+
+
+
+
+
 	@property
-	def lines_breaked(self):
+	def lines_breaked(self):#to get lines breaked number
 		return self.__lines_breaked
 
 	@property
-	def next_piece(self):
+	def next_piece(self):#to preview next piece
 		return self.__next_piece
+
+	@property
+	def holded_piece(self):#to get holded piece
+		return self.__holded
+
 
 
 	@property
-	def main_array(self):
+	def main_array(self):#to get main_array
 		self.__next(self.__buttons)
 		self.__buttons = []
 

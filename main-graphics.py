@@ -18,11 +18,12 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-LEFT_BTN = 4
-RIGHT_BTN = 3
-BOTTOM_BTN = 2
-ROATE_LEFT_BTN     = -1
-ROATE_RIGHT_BTN     = 1
+LEFT_BTN             = 4
+RIGHT_BTN            = 3
+BOTTOM_BTN           = 2
+ROATE_LEFT_BTN       =-1
+ROATE_RIGHT_BTN      = 1
+HOLD_BTN             = 5
 SCALE = int(WIDTH/10)
 
 HEIGHT = SCALE * ROWS
@@ -59,6 +60,7 @@ sprites = {
 
 
 preview = {
+	0: pygame.image.load(join("resources","none.png")),
 	1: pygame.image.load(join("resources","preview","1.png")),
 	2: pygame.image.load(join("resources","preview","2.png")),
 	3: pygame.image.load(join("resources","preview","3.png")),
@@ -110,7 +112,7 @@ class Window:
 				if event.key == pygame.K_a: self.tetris.button = LEFT_BTN
 				if event.key == pygame.K_s: self.tetris.button = BOTTOM_BTN
 				if event.key == pygame.K_d: self.tetris.button = RIGHT_BTN
-
+				if event.key == pygame.K_c: self.tetris.button = HOLD_BTN
 
 
 			if event.type == pygame.VIDEORESIZE:
@@ -157,18 +159,28 @@ class Window:
 		(
 			{1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.next_piece],
 			{1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.next_piece]
-		
-		
-		)
-		)
+		))
 		self.screen.blit(spr,(
-
 			spr.get_rect(topleft=(
-				SCALE * 10, Y_OFFSET_BRICKS
+				SCALE * 10+X_OFFSET_BRICKS, Y_OFFSET_BRICKS
 			))
-
 		))
 		
+
+		#превью взятого блока
+		spr = pygame.transform.scale(preview[self.tetris.holded_piece],
+		(
+			{0:0,1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.holded_piece],
+			{0:0,1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.holded_piece]
+		))
+		self.screen.blit(spr,(
+			spr.get_rect(topleft=(
+				SCALE * 10 +X_OFFSET_BRICKS, Y_OFFSET_BRICKS + SCALE * 5
+			))
+		))
+
+
+
 		pygame.display.flip()
 
 	def drawRect(self,x,y,type):
@@ -206,7 +218,7 @@ class Window:
 		SCALE = int(WIDTH/10)
 		HEIGHT = int(SCALE * ROWS)
 
-		X_OFFSET_BRICKS = 0
+		X_OFFSET_BRICKS = 0*SCALE
 		Y_OFFSET_BRICKS = int(HEIGHT_ * 0.05)
 
 		self.screen = pygame.display.set_mode((WIDTH+X_OFFSET_BRICKS+2*SCALE, HEIGHT+Y_OFFSET_BRICKS),pygame.RESIZABLE)
