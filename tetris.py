@@ -41,6 +41,25 @@ class Tetris:
 		self.__pack = self.__sample_pack.copy()
 		self.__next_piece = choice(self.__pack)
 		self.__pack.remove(self.__next_piece)
+		
+		
+		self.__next_piece_2 = choice(self.__pack)
+		self.__pack.remove(self.__next_piece_2)
+		
+		
+		
+		self.__next_piece_3 = choice(self.__pack)
+		self.__pack.remove(self.__next_piece_3)
+		
+		self.__next_piece_4 = choice(self.__pack)
+		self.__pack.remove(self.__next_piece_4)
+				
+
+		self.__next_piece_5 = choice(self.__pack)
+		self.__pack.remove(self.__next_piece_5)
+																		
+		
+		
 		self.__buttons = []
 
 		self.__speed_frames = speed_frames
@@ -56,6 +75,7 @@ class Tetris:
 		self.__current_rotation = 0
 		self.__holded = 0
 		self.__hold_allowed = True
+		
 
 
 # 1 :bar                color
@@ -168,10 +188,19 @@ class Tetris:
 	def __swap_current_brick(self):
 		
 		self.__check_for_lines()
-		self.__current_brick_type = self.__next_piece
+		(self.__current_brick_type,
+		self.__next_piece,
+		self.__next_piece_2,
+		self.__next_piece_3,
+		self.__next_piece_4) = (self.__next_piece,
+		self.__next_piece_2,
+		self.__next_piece_3,
+		self.__next_piece_4,
+		self.__next_piece_5)
+		
 		if len(self.__pack) ==0: self.__pack = self.__sample_pack.copy()
-		self.__next_piece = choice(self.__pack)
-		self.__pack.remove(self.__next_piece)
+		self.__next_piece_5 = choice(self.__pack)
+		self.__pack.remove(self.__next_piece_5)
 	
 		self.__make_pos()
 
@@ -356,7 +385,7 @@ class Tetris:
 # acceseble
 
 
-	@property#for setter
+	@property #for setter
 	def button(self):#for setter
 		return self.__buttons#for setter
 	
@@ -387,8 +416,15 @@ class Tetris:
 		return self.__lines_breaked
 
 	@property
-	def next_piece(self):#to preview next piece
-		return self.__next_piece
+	def next_pieces(self):#to preview next pieces
+		return (
+		self.__next_piece,
+		self.__next_piece_2,
+		self.__next_piece_3,	
+		self.__next_piece_4,
+		self.__next_piece_5	
+		
+		)
 
 	@property
 	def holded_piece(self):#to get holded piece

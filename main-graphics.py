@@ -6,7 +6,7 @@ from time import time
 import random
 from os.path import join
 VOLUME = 1#%
-ROWS = 15
+ROWS = 20
 HEIGHT =800  # высота игрового окна
 WIDTH = int((HEIGHT/(ROWS))*10)# ширина игрового окна
 TIME_FOR_FALL= 2#s
@@ -20,8 +20,8 @@ BLUE = (0, 0, 255)
 LEFT_BTN             = 4
 RIGHT_BTN            = 3
 BOTTOM_BTN           = 2
-ROATE_LEFT_BTN       =-1
-ROATE_RIGHT_BTN      = 1
+ROTATE_LEFT_BTN       =-1
+ROTATE_RIGHT_BTN      = 1
 HOLD_BTN             = 5
 SCALE = int(WIDTH/10)
 
@@ -106,8 +106,8 @@ class Window:
 				self.running = False
 			if event.type == pygame.KEYDOWN:
 				
-				if event.key == pygame.K_q: self.tetris.button = ROATE_LEFT_BTN
-				if event.key == pygame.K_e: self.tetris.button = ROATE_RIGHT_BTN
+				if event.key == pygame.K_q: self.tetris.button = ROTATE_LEFT_BTN
+				if event.key == pygame.K_e: self.tetris.button = ROTATE_RIGHT_BTN
 				if event.key == pygame.K_a: self.tetris.button = LEFT_BTN
 				if event.key == pygame.K_s: self.tetris.button = BOTTOM_BTN
 				if event.key == pygame.K_d: self.tetris.button = RIGHT_BTN
@@ -154,14 +154,16 @@ class Window:
 
 
 		#превью следуйщего блока
-		spr = pygame.transform.scale(preview[self.tetris.next_piece],
+		for idx in range (len(self.tetris.next_pieces)):
+			#print (self.tetris.next_pieces)
+			spr = pygame.transform.scale(preview[self.tetris.next_pieces[idx]],
 		(
-			{1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.next_piece],
-			{1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.next_piece]
+			{1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.next_pieces[idx]],
+			{1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.next_pieces[idx]]
 		))
-		self.screen.blit(spr,(
+			self.screen.blit(spr,(
 			spr.get_rect(topleft=(
-				SCALE * 10+X_OFFSET_BRICKS, Y_OFFSET_BRICKS
+				SCALE * 10+X_OFFSET_BRICKS, Y_OFFSET_BRICKS + 4*SCALE*idx
 			))
 		))
 		
@@ -174,7 +176,7 @@ class Window:
 		))
 		self.screen.blit(spr,(
 			spr.get_rect(topleft=(
-				SCALE * 10 +X_OFFSET_BRICKS, Y_OFFSET_BRICKS + SCALE * 5
+				SCALE * -2 +X_OFFSET_BRICKS, Y_OFFSET_BRICKS 
 			))
 		))
 
@@ -209,15 +211,15 @@ class Window:
 		global SCALE
 		global X_OFFSET_BRICKS
 		global Y_OFFSET_BRICKS
-		HEIGHT_ = self.screen.get_height() 
-		WIDTH_  = self.screen.get_width()  * 1
+		HEIGHT_ = self.screen.get_height()
+		WIDTH_  = self.screen.get_width()  
 		
 		HEIGHT = HEIGHT_ * 0.95
 		WIDTH= int((HEIGHT/(ROWS))*10)  # ширина игрового окна
 		SCALE = int(WIDTH/10)
 		HEIGHT = int(SCALE * ROWS)
 
-		X_OFFSET_BRICKS = 0*SCALE
+		X_OFFSET_BRICKS = 2*SCALE
 		Y_OFFSET_BRICKS = int(HEIGHT_ * 0.05)
 
 		self.screen = pygame.display.set_mode((WIDTH+X_OFFSET_BRICKS+2*SCALE, HEIGHT+Y_OFFSET_BRICKS),pygame.RESIZABLE)
