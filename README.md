@@ -1,10 +1,10 @@
 # tetris
 
-* main-console.py 
-starts game in the console. (pynput is needed)
+* main-bot-neiro.py 
+starts game but it is neirul network. (pygame,numpy,neat is needed)
 
 * main-graphics.py
-starts game in window. (pygame isneeded)
+starts game in window. (pygame is needed)
 
 * bot.py
 starts game, but bot is playing

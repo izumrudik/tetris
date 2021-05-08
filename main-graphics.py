@@ -92,6 +92,9 @@ class Window:
 
 
 	def draw(self):
+		if self.tetris.die:
+			self.tetris = self.tetris.__init__(ROWS,TIME_FOR_FALL*FPS)
+		A.tetris.run()#run
 		#print("\033[92m FPS \033[0m")
 		self.screen.fill(WHITE)
 
@@ -158,8 +161,8 @@ class Window:
 			#print (self.tetris.next_pieces)
 			spr = pygame.transform.scale(preview[self.tetris.next_pieces[idx]],
 		(
-			{1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.next_pieces[idx]],
-			{1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.next_pieces[idx]]
+			{0:0,1:SCALE*1,2:SCALE*2,3:SCALE*2,4:SCALE*2,5:SCALE*2,6:SCALE*2,7:SCALE*2}[self.tetris.next_pieces[idx]],
+			{0:0,1:SCALE*4,2:SCALE*3,3:SCALE*3,4:SCALE*3,5:SCALE*3,6:SCALE*3,7:SCALE*2}[self.tetris.next_pieces[idx]]
 		))
 			self.screen.blit(spr,(
 			spr.get_rect(topleft=(

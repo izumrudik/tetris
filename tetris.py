@@ -75,7 +75,7 @@ class Tetris:
 		self.__current_rotation = 0
 		self.__holded = 0
 		self.__hold_allowed = True
-		
+		self.__died = False
 
 
 # 1 :bar                color
@@ -91,10 +91,10 @@ class Tetris:
 
 	def __die(self):
 		self.__current_brick_pos = []
-		self.die = True
+		self.__died = True
 		#print("died")
-
-		self = self.__init__(self.height,(self.__speed_frames-1))#restart but harder
+		self.__next = lambda self:0
+		#self = self.__init__(self.height,(self.__speed_frames-1))#restart but harder
 
 
 	def __move_brick_by(self,offset):
@@ -416,6 +416,11 @@ class Tetris:
 		return self.__lines_breaked
 
 	@property
+	def die(self):#to get lines breaked number
+		return self.__died
+
+
+	@property
 	def next_pieces(self):#to preview next pieces
 		return (
 		self.__next_piece,
@@ -434,10 +439,9 @@ class Tetris:
 
 	@property
 	def main_array(self):#to get main_array
-		self.__next(self.__buttons)
-		self.__buttons = []
-
 		return self.__main_array
 
-
+	def run(self):
+		self.__next(self.__buttons)
+		self.__buttons = []
 	
