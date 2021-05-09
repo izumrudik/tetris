@@ -1,4 +1,4 @@
-#main array anotation:
+#main array annotation:
 # 0 : nothing           color
 # - something: whited   color
 # 1 :bar                color
@@ -21,13 +21,17 @@
 # 2-bottom
 # 3-right
 # 4-left
-# 5 -hlod
+# 5 -hold
 
 from random import choice
 
 
 class Tetris:
-	def __init__(self,height=15,speed_frames=60):
+	def __init__(self,height=20,FPS=60,tick=2):
+		self.__FPS = int(FPS)
+		self.__tick = tick
+		self.__speed_frames = self.__tick * self.__FPS
+
 		self.__main_array = [
 			[ 0 for j in range(height) ] for i in range(10)
 		]
@@ -62,20 +66,20 @@ class Tetris:
 		
 		self.__buttons = []
 
-		self.__speed_frames = speed_frames
 		self.__frames_passed = 0
 
 
 		self.__current_brick_type = choice(self.__pack)
 		self.__pack.remove(self.__current_brick_type)
 		
-		self.__make_pos()
 		self.__score = 0
+		self.__make_pos()
 		self.__delete_lines = []
 		self.__current_rotation = 0
 		self.__holded = 0
 		self.__hold_allowed = True
 		self.__died = False
+		self.__score = 0
 
 
 # 1 :bar                color
@@ -94,6 +98,7 @@ class Tetris:
 		self.__died = True
 		#print("died")
 		self.__next = lambda self:0
+		self.__next_piece,self.__next_piece_2,self.__next_piece_3,self.__next_piece_4,self.__next_piece_5 = 0,0,0,0,0
 		#self = self.__init__(self.height,(self.__speed_frames-1))#restart but harder
 
 
@@ -186,7 +191,6 @@ class Tetris:
 
 
 	def __swap_current_brick(self):
-		
 		self.__check_for_lines()
 		(self.__current_brick_type,
 		self.__next_piece,
@@ -265,7 +269,8 @@ class Tetris:
 
 
 	def __make_pos(self):
-
+		self.__score+=10
+		
 		self.__current_rotation = 0
 		height = self.height-1
 		if self.__current_brick_type == 1:
@@ -361,6 +366,7 @@ class Tetris:
 			self.__sound.append(3)
 			return
 
+		self.__score -=10
 		if not self.__holded:
 			self.__holded = self.__current_brick_type 
 			self.__swap_current_brick()
@@ -370,7 +376,7 @@ class Tetris:
 		
 
 		self.__holded,self.__current_brick_type = self.__current_brick_type, self.__holded
-		self.__make_pos()
+		self.__make_pos()	
 		
 		self.__hold_allowed = False
 
@@ -382,7 +388,7 @@ class Tetris:
 
 
 
-# acceseble
+# accessible
 
 
 	@property #for setter
@@ -398,7 +404,7 @@ class Tetris:
 
 	@property
 	def score(self):#to get score
-		return self.__score + 1000 * self.__lines_breaked
+		return self.__score + 10000 * self.__lines_breaked
 
 	@property
 	def sound(self):#to get sound
@@ -444,4 +450,12 @@ class Tetris:
 	def run(self):
 		self.__next(self.__buttons)
 		self.__buttons = []
+
+	@property
+	def FPS(self):#to get FPS
+		return self.__FPS  
+	@FPS.setter
+	def FPS(self, value):
+		self.__FPS = value
+		self.__speed_frames = self.__tick * value
 	

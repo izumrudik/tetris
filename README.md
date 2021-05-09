@@ -1,6 +1,6 @@
 # tetris
 
-* main-bot-neiro.py 
+* bot-neiro.py 
 starts game but it is neirul network. (pygame,numpy,neat is needed)
 
 * main-graphics.py

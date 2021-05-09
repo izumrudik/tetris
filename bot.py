@@ -33,8 +33,10 @@ class Window:
 	def __init__(A,tetris,bot):A.bt = bot;A.tetris=tetris;A.screen=pygame.display.set_mode((WIDTH,HEIGHT),pygame.RESIZABLE);pygame.display.set_caption('Tetris');A.clock=pygame.time.Clock();A.running=_D;A.resize()
 	def draw(A):
 		A.tetris.run()
-		if A.tetris.die:A.tetris = A.tetris.__init__(ROWS,TIME_FOR_FALL*FPS)
+		if A.tetris.die:A.tetris = A.tetris.__init__(ROWS,FPS,TIME_FOR_FALL)
 		A.screen.fill(WHITE);A.clock.tick(FPS)
+		A.tetris.FPS = A.clock.get_fps() if A.clock.get_fps()!=0 else FPS
+		
 		for B in pygame.event.get():
 			if B.type==pygame.QUIT:A.running=False
 			if B.type==pygame.VIDEORESIZE:A.resize()
@@ -151,7 +153,7 @@ class Bot:
 
 
 
-tetris=Tetris(ROWS,TIME_FOR_FALL*FPS)
+tetris=Tetris(ROWS,FPS,TIME_FOR_FALL)
 bot = Bot(tetris)
 app=Window(tetris,bot)
 

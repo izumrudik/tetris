@@ -1,1 +1,0 @@
-__import__("neiro.bot-neiro")
