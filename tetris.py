@@ -24,7 +24,9 @@
 # 5 -hold
 
 from random import choice
-
+GO_DOWN_SCORE = 1 
+SET_BRICK_SCORE = 50
+LINE_BREAKED_SCORE = 10000
 
 class Tetris:
 	def __init__(self,height=20,FPS=60,tick=2):
@@ -248,7 +250,7 @@ class Tetris:
 		if 2 in buttons: 
 			self.__delete_if_possible()
 			self.__move_brick()
-			self.__score+=1
+			self.__score+=GO_DOWN_SCORE
 			self.__frames_passed = 0
 		if 3 in buttons: self.__move_brick_by(-1)
 		if 4 in buttons: self.__move_brick_by(1)
@@ -269,7 +271,7 @@ class Tetris:
 
 
 	def __make_pos(self):
-		self.__score+=10
+		self.__score+=SET_BRICK_SCORE
 		
 		self.__current_rotation = 0
 		height = self.height-1
@@ -366,7 +368,7 @@ class Tetris:
 			self.__sound.append(3)
 			return
 
-		self.__score -=10
+		self.__score -=SET_BRICK_SCORE
 		if not self.__holded:
 			self.__holded = self.__current_brick_type 
 			self.__swap_current_brick()
@@ -404,7 +406,7 @@ class Tetris:
 
 	@property
 	def score(self):#to get score
-		return self.__score + 10000 * self.__lines_breaked
+		return self.__score + LINE_BREAKED_SCORE * self.__lines_breaked
 
 	@property
 	def sound(self):#to get sound

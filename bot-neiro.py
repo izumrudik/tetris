@@ -5,13 +5,16 @@ import pygame,random
 from threading import Thread
 from time import time
 from os.path import join
+from neat import checkpoint
 
+STATE = True#True- generate
+#False - load checkpoint
 
 
 class Game:
-	def __init__(self,p,x,y,width,height,screen):
+	def __init__(self,p,x,y,width,height,screen,display=True):
 		self.die = False
-
+		self.display = display
 		self.tetris = Tetris(20,2,20)
 		self.bot = Bot(self.tetris,p) 
 		self.x = x
@@ -39,6 +42,7 @@ class Game:
 			self.die = True
 
 
+		if not self.display: return #optimization
 
 		#rip sound		
 
@@ -106,8 +110,15 @@ class Game:
 
 		))
 
-
-
+	def run(self):
+		running = True
+		while running:
+			pygame.display.fill((255,255,255))
+			for i in pygame.event.get():
+				if i.type == pygame.QUIT:
+					running = False
+			self.draw()
+			pygame.display.flip()
 
 
 
@@ -168,12 +179,12 @@ class Bot:
 
 
 		for i in range(len(outputs)):
-			if outputs[i] > 0:
+			if outputs[i] > 0.5:
 				self.button = -1 if i == 0 else i
 
 
 
-
+	
 	
 
 
@@ -203,13 +214,17 @@ config = neat.config.Config(neat.DefaultGenome,neat.DefaultReproduction,neat.Def
 p = neat.Population(config)
 
 
+
+
+
+
+if not STATE:
+	p = checkpoints.restore_checkpoint(join("neiro",input("Enter filename of checkpoint (neiro folder):\n")))
+
+
 p.add_reporter(neat.StdOutReporter(True))
 stats = neat.StatisticsReporter()
 p.add_reporter(stats)
-
-
-
-
 
 generation = 0
 #%%
@@ -218,7 +233,7 @@ pygame.init()
 pygame.mixer.init()  # для звука
 pygame.font.init()
 
-FPS = 20
+FPS = 10
 TEXT_COLOR = (0, 0, 0)
 
 sprites = {
@@ -259,6 +274,9 @@ height = 2 * width
 screen = pygame.display.set_mode((int(5.2*width),int(height*1.1)),pygame.RESIZABLE)
 clock = pygame.time.Clock()
 MaxScore = 0
+checkpoints = checkpoint.Checkpointer()
+checkpoints.filename_prefix = join("neiro","checkpoints","generation - ")
+
 #%%
 def run(genomes,config):
 	global generation
@@ -268,12 +286,12 @@ def run(genomes,config):
 
 	games = []
 	index = 0
-	for idx, g in genomes:
+	for __idx__, g in genomes:
 		
 		net = neat.nn.FeedForwardNetwork.create(g,config)
 		nets.append(net)
 		g.fitness = 0
-		games.append(Game(net,index*width,0,width,height,screen) )
+		games.append(Game(net,index*width,0,width,height,screen,index<5) )
 		index += 1
 
 
@@ -300,23 +318,29 @@ def run(genomes,config):
 
 		for i in pygame.event.get():
 			if i.type == pygame.QUIT:
-				pygame.display.quit()
+				checkpoints.save_checkpoint(config,p,genomes,generation)
 
 		died = 0
+		move_by = 0
 		for idx,i in enumerate(games):
 			if MaxScore < i.tetris.score: MaxScore = i.tetris.score
 			if MaxGenScore < i.tetris.score: MaxGenScore = i.tetris.score
-			died+=1 if i.die else 0
+			i.x -=width * move_by
+			if i.die:
+				died+=1
+				games[idx+1].display = i.display
+				i.display = False
+				move_by +=1
 			i.draw()
 
 
-		if died==5:
+		if died==len(genomes):
 			generation+=1
 			break
 
 
 
-		text = font.render(f"generation:{generation} alive:{5-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}",True, (10,0,255))
+		text = font.render(f"generation:{generation} alive:{len(genomes)-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}",True, (10,0,255))
 
 		screen.blit(text,(width*1.5,height*1.05))
 
@@ -324,8 +348,9 @@ def run(genomes,config):
 
 	
 #%%
-p.run(run,n=1000000)
-
+best = p.run(run,n=1000000)
+checkpoints.filename_prefix = join("neiro","checkpoints","generation - ")
+Game(best,100,0,width,height,screen).run()
 # %%
 pygame.display.quit()
 # %%
