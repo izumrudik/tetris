@@ -24,8 +24,8 @@
 # 5 -hold
 
 from random import choice
-GO_DOWN_SCORE = 1 
-SET_BRICK_SCORE = 50
+GO_DOWN_SCORE = 1
+SET_BRICK_SCORE = 10
 LINE_BREAKED_SCORE = 10000
 
 class Tetris:
@@ -406,7 +406,7 @@ class Tetris:
 
 	@property
 	def score(self):#to get score
-		return self.__score + LINE_BREAKED_SCORE * self.__lines_breaked
+		return int(self.__score + LINE_BREAKED_SCORE * self.__lines_breaked)
 
 	@property
 	def sound(self):#to get sound

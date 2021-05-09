@@ -1,5 +1,5 @@
 #%%
-import numpy as np, neat,sys
+import numpy as np, neat,sys,tetris
 from tetris import Tetris
 import pygame,random
 from threading import Thread
@@ -7,12 +7,19 @@ from time import time
 from os.path import join
 from neat import checkpoint
 
+
+
+tetris.GO_DOWN_SCORE = 1
+tetris.SET_BRICK_SCORE = 10
+
+
 STATE = True#True- generate
 #False - load checkpoint
 
 
 class Game:
-	def __init__(self,p,x,y,width,height,screen,display=True):
+	def __init__(self,idx,p,x,y,width,height,screen,display=True):
+		self.moved = False
 		self.die = False
 		self.display = display
 		self.tetris = Tetris(20,2,20)
@@ -24,7 +31,7 @@ class Game:
 		self.screen = screen
 		self.self = self
 
-
+		self.idx = idx
 
 		self.SCALE = int(self.height/23)
 		self.X_OFFSET_BRICKS = 2*self.SCALE
@@ -58,11 +65,11 @@ class Game:
 		font = pygame.font.SysFont(None, int(self.SCALE))
 
 		self.lines_breaked_text = font.render(
-			f"LINES:{self.tetris.lines_breaked}", True, TEXT_COLOR)
+			f"IDX:{self.idx} LINES:{self.tetris.lines_breaked}", True, TEXT_COLOR)
 		self.score_text = font.render(f"SCORE:{self.tetris.score}", True, TEXT_COLOR)
 
 		self.screen.blit(self.score_text, (self.x+self.SCALE*2, self.y))
-		self.screen.blit(self.lines_breaked_text, (self.x+self.SCALE*8, self.y))
+		self.screen.blit(self.lines_breaked_text, (self.x+self.SCALE*7, self.y))
 
 		# превью следуйщего блока
 		for idx in range(len(self.tetris.next_pieces)):
@@ -291,7 +298,7 @@ def run(genomes,config):
 		net = neat.nn.FeedForwardNetwork.create(g,config)
 		nets.append(net)
 		g.fitness = 0
-		games.append(Game(net,index*width,0,width,height,screen,index<5) )
+		games.append(Game(index,net,index*width,0,width,height,screen,index<5) )
 		index += 1
 
 
@@ -308,6 +315,9 @@ def run(genomes,config):
 
 	
 	MaxGenScore = 0
+	length = len(genomes)
+	screen_width = screen.get_width()
+
 
 	while 1:
 		screen.fill((255, 255, 255))
@@ -315,41 +325,50 @@ def run(genomes,config):
 		clock.tick(FPS) 
 
 
-
 		for i in pygame.event.get():
 			if i.type == pygame.QUIT:
 				checkpoints.save_checkpoint(config,p,genomes,generation)
+			if i.type == pygame.VIDEORESIZE:
+				screen_width = screen.get_width()
 
 		died = 0
 		move_by = 0
 		for idx,i in enumerate(games):
 			if MaxScore < i.tetris.score: MaxScore = i.tetris.score
 			if MaxGenScore < i.tetris.score: MaxGenScore = i.tetris.score
-			i.x -=width * move_by
+			i.x -= move_by * width
+			i.display = not(i.x +100 > screen_width or i.moved)
 			if i.die:
 				died+=1
-				games[idx+1].display = i.display
-				i.display = False
-				move_by +=1
+				if not i.moved:
+					i.display = False
+					i.moved = True
+					move_by+=1
+
 			i.draw()
 
 
-		if died==len(genomes):
+
+		if died==length:
 			generation+=1
 			break
 
 
 
-		text = font.render(f"generation:{generation} alive:{len(genomes)-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}",True, (10,0,255))
+		text = font.render(f"generation:{generation} alive:{length-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}",True, (10,0,255))
 
 		screen.blit(text,(width*1.5,height*1.05))
 
 		pygame.display.flip()
 
+
+
+	#save
+	checkpoints.save_checkpoint(config,p,genomes,generation)
+
 	
 #%%
 best = p.run(run,n=1000000)
-checkpoints.filename_prefix = join("neiro","checkpoints","generation - ")
 Game(best,100,0,width,height,screen).run()
 # %%
 pygame.display.quit()
