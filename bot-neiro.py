@@ -9,7 +9,7 @@ import random
 from threading import Thread
 from time import time
 from os.path import join
-
+from threading import Thread
 
 tetris.GO_DOWN_SCORE = 0.1
 tetris.SET_BRICK_SCORE = 5
@@ -178,7 +178,7 @@ class Bot:
 		#inputs = np.array(inputs, dtype=np.float)  # numpy
 
 		outputs = self.net.activate(inputs)
-
+		
 		
 		# should be 206 inputs
 
@@ -273,6 +273,7 @@ screen = pygame.display.set_mode(
 clock = pygame.time.Clock()
 MaxScore = 0
 
+font = pygame.font.SysFont(None, int(40))
 
 # %%
 
@@ -291,7 +292,7 @@ def run(genomes, config):
 		net = neat.nn.FeedForwardNetwork.create(g, config)
 		nets.append(net)
 		g.fitness = 0
-		games.append(Game(index, net, index*width, 0,
+		games.append(Game(index, net, index*width, 40,
 					 width, height, screen, index < 5))
 		index += 1
 
@@ -307,7 +308,6 @@ def run(genomes, config):
 		screen.fill((255, 255, 255))
 
 		clock.tick(FPS)
-
 		for i in pygame.event.get():
 			if i.type == pygame.QUIT:
 				checkpoints.save_checkpoint(config, p, neat.DefaultSpeciesSet(config,stats), p.generation)
@@ -318,7 +318,10 @@ def run(genomes, config):
 
 		died = 0
 		move_by = 0
+		threds = []
 		for idx, i in enumerate(games):
+
+
 			genomes[idx][1].fitness = i.tetris.score
 			if MaxScore < i.tetris.score:
 				MaxScore = i.tetris.score
@@ -333,15 +336,27 @@ def run(genomes, config):
 					i.moved = True
 					move_by += 1
 
-			i.draw()
+			threds.append(Thread(target=i.draw))
+			threds[-1].start()
+
 
 		if died == length:
 			generation += 1
 			break
 
-		pygame.display.set_caption(f"generation:{generation} alive:{length-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}")
+		text = f"generation:{generation} alive:{length-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}"
+		pygame.display.set_caption(text)
+
+		screen.blit(
+			font.render(text, True, (10,0,255)),
+			(10,0)
+
+		)
 
 
+		for i in threds:
+			i.join()
+			#0
 		pygame.display.flip()
 
 	# save
@@ -350,11 +365,15 @@ def run(genomes, config):
 
 # %%
 winner = p.run(run, 100)
+# %%
+checkpoints.save_checkpoint(config, p,None, generation)	
+
 win = p.best_genome
 pickle.dump(winner, open(join('neiro','winner.pkl'), 'wb'))
 pickle.dump(win, open(join('neiro','real_winner.pkl'), 'wb'))
+pickle.dump(p, open(join('neiro','population.pkl'), 'wb'))
 
-
+#%%
 
 Game(win, 100, 0, width, height, screen).run()
 
