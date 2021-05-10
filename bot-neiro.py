@@ -1,6 +1,5 @@
 # %%
 import pickle
-import numpy as np
 import neat
 import sys
 import tetris
@@ -39,6 +38,8 @@ class Game:
 		self.SCALE = int(self.height/23)
 		self.X_OFFSET_BRICKS = 2*self.SCALE
 		self.Y_OFFSET_BRICKS = int(height * 0.05)
+		self.font = pygame.font.SysFont(None, int(self.SCALE))
+		
 
 	def draw(self):
 
@@ -63,11 +64,10 @@ class Game:
 				self.drawRect(x, y, main_array[x][y])
 
 		# текст
-		font = pygame.font.SysFont(None, int(self.SCALE))
 
-		self.lines_breaked_text = font.render(
+		self.lines_breaked_text = self.font.render(
 			f"IDX:{self.idx} LINES:{self.tetris.lines_breaked}", True, TEXT_COLOR)
-		self.score_text = font.render(
+		self.score_text = self.font.render(
 			f"SCORE:{self.tetris.score}", True, TEXT_COLOR)
 
 		self.screen.blit(self.score_text, (self.x+self.SCALE*2, self.y))
@@ -167,7 +167,7 @@ class Bot:
 		inputs = []
 		for i in self.main:
 			inputs.extend(i)
-		inputs.extend([*self.next, self.holded])
+		inputs.extend([*self.next, self.holded,1])
 
 		for i in range(len(inputs)):
 			# -7 to 7 to -1 to 1
@@ -175,7 +175,7 @@ class Bot:
 			# -7 to 7 to 0 to 1
 			# inputs[i] = (inputs[i]+7) /14# -7 = 0, 0 = 0.5, 7 = 1
 
-		inputs = np.array(inputs, dtype=np.float)  # numpy
+		#inputs = np.array(inputs, dtype=np.float)  # numpy
 
 		outputs = self.net.activate(inputs)
 
@@ -291,13 +291,12 @@ def run(genomes, config):
 		net = neat.nn.FeedForwardNetwork.create(g, config)
 		nets.append(net)
 		g.fitness = 0
-		games.append(Game(index, net, index*width, 40,
+		games.append(Game(index, net, index*width, 0,
 					 width, height, screen, index < 5))
 		index += 1
 
 	running = True
 
-	font = pygame.font.SysFont(None, 40)
 
 	MaxGenScore = 0
 	length = len(genomes)
@@ -340,10 +339,8 @@ def run(genomes, config):
 			generation += 1
 			break
 
-		text = font.render(
-			f"generation:{generation} alive:{length-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}", True, (10, 0, 255))
+		pygame.display.set_caption(f"generation:{generation} alive:{length-died} FPS:{int(clock.get_fps())} max:{MaxScore} current max:{MaxGenScore}")
 
-		screen.blit(text, (0, 0))
 
 		pygame.display.flip()
 

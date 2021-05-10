@@ -1,6 +1,6 @@
 # %%
 import pickle
-import numpy as np
+
 import neat
 import sys
 import tetris
@@ -69,7 +69,7 @@ class Bot:
 		inputs = []
 		for i in self.main:
 			inputs.extend(i)
-		inputs.extend([*self.next, self.holded])
+		inputs.extend([*self.next, self.holded,1])
 
 		for i in range(len(inputs)):
 			# -7 to 7 to -1 to 1
@@ -77,7 +77,7 @@ class Bot:
 			# -7 to 7 to 0 to 1
 			# inputs[i] = (inputs[i]+7) /14# -7 = 0, 0 = 0.5, 7 = 1
 
-		inputs = np.array(inputs, dtype=np.float)  # numpy
+		#inputs = np.array(inputs, dtype=np.float)  # numpy
 
 		outputs = self.net.activate(inputs)
 
