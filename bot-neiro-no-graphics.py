@@ -13,6 +13,7 @@ from time import time
 tetris.GO_DOWN_SCORE = 0.1
 tetris.SET_BRICK_SCORE = 5
 
+CLEAR_LINE = "\x1b[2K"
 
 STATE = True  # True- generate
 # False - load neat
@@ -159,9 +160,10 @@ def run(genomes, config):
 	length = len(genomes)
 
 	previus = time()
+	fps = 0
 	while 1:
 		now = time()
-		
+		fps = 1/(now-previus)
 
 		died = 0
 		for idx, i in enumerate(games):
@@ -179,19 +181,21 @@ def run(genomes, config):
 			generation += 1
 			break
 
-		print(end=f"generation:{generation} alive:{length-died} FPS:{int(1/(now-previus))} max:{MaxScore} current max:{MaxGenScore}\r")
+		print(end=f"{CLEAR_LINE}\rgeneration:{generation} alive:{length-died} FPS:{int(fps)} max:{MaxScore} current max:{MaxGenScore}")
 
 
 		previus = now
 	# save
+	print(CLEAR_LINE)
 	checkpoints.save_checkpoint(config, p,None, generation)	
+
 
 
 # %%
 winner = p.run(run, 100)
 win = p.best_genome
-pickle.dump(winner, open('winner.pkl', 'wb'))
-pickle.dump(win, open('real_winner.pkl', 'wb'))
+pickle.dump(winner, open(join('neiro','winner.pkl'), 'wb'))
+pickle.dump(win, open(join('neiro','real_winner.pkl'), 'wb'))
 
 
 
