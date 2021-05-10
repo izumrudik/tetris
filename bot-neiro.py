@@ -12,8 +12,8 @@ from time import time
 from os.path import join
 
 
-tetris.GO_DOWN_SCORE = 1
-tetris.SET_BRICK_SCORE = 10
+tetris.GO_DOWN_SCORE = 0.1
+tetris.SET_BRICK_SCORE = 5
 
 
 STATE = True  # True- generate
