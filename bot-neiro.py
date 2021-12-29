@@ -10,12 +10,15 @@ from threading import Thread
 from time import time
 from os.path import join
 from threading import Thread
+import argparse
 
 tetris.GO_DOWN_SCORE = 0.1
-tetris.SET_BRICK_SCORE = 5
+tetris.SET_BRICK_SCORE = 1
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-s','--state',action='store_true',help='generate/load checkpoints')
 
-STATE = True  # True- generate
+STATE = not parser.parse_args().state   # True- generate
 # False - load neat
 
 

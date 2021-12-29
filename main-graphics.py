@@ -23,6 +23,7 @@ BOTTOM_BTN = 2
 ROTATE_LEFT_BTN = -1
 ROTATE_RIGHT_BTN = 1
 HOLD_BTN = 5
+HARD_DROP_BTN = 6
 SCALE = int(WIDTH/10)
 
 HEIGHT = SCALE * ROWS
@@ -118,6 +119,8 @@ class Window:
 					self.tetris.button = RIGHT_BTN
 				if event.key == pygame.K_c:
 					self.tetris.button = HOLD_BTN
+				if event.key == pygame.K_SPACE:
+					self.tetris.button = HARD_DROP_BTN
 
 			if event.type == pygame.VIDEORESIZE:
 				self.resize()

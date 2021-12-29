@@ -22,12 +22,13 @@
 # 3-right
 # 4-left
 # 5 -hold
+# 6 -hard-drop
 
 from random import choice
-GO_DOWN_SCORE = 1
-SET_BRICK_SCORE = 10
-LINE_BREAKED_SCORE = 10000
-
+GO_DOWN_SCORE = 0
+SET_BRICK_SCORE = 0
+LINE_BREAKED_SCORE = 40
+HARD_DROP_SCORE = 2
 class Tetris:
 	def __init__(self,height=20,FPS=60,tick=2):
 		self.__FPS = int(FPS)
@@ -125,25 +126,27 @@ class Tetris:
 		except AssertionError:#hit ground
 			pass
 
-	def __move_brick(self):
+	def __move_brick(self,hard=False):
 
 
-
+		first=True
 		try:
-			copy = [[ 0,0 ] for i in range(4)]
+			while hard or first:
+				first = False
+				copy = [[ 0,0 ] for i in range(4)]
 
-			for i in range(len(self.__current_brick_pos)):
-				copy[i] = self.__current_brick_pos[i].copy()
+				for i in range(len(self.__current_brick_pos)):
+					copy[i] = self.__current_brick_pos[i].copy()
 
 
 
-			for i in copy: #move
-				i[1] -=1
-				assert not self.__felled_array[i[0]][i[1]], "Hit something"
-				assert i[0]>=0 and i[1]>=0, "hit ground"
-				
-			self.__current_brick_pos = copy
-		
+				for i in copy: #move
+					i[1] -=1
+					assert not self.__felled_array[i[0]][i[1]], "Hit something"
+					assert i[0]>=0 and i[1]>=0, "hit ground"
+					
+				self.__current_brick_pos = copy
+
 
 		except AssertionError:#hit ground
 			for i in self.__current_brick_pos:
@@ -252,6 +255,11 @@ class Tetris:
 			self.__move_brick()
 			self.__score+=GO_DOWN_SCORE
 			self.__frames_passed = 0
+		if 6 in buttons:
+			self.__delete_if_possible()
+			self.__move_brick(hard=True)
+			self.__score+=HARD_DROP_SCORE
+			self.__frames_passed = 0      
 		if 3 in buttons: self.__move_brick_by(-1)
 		if 4 in buttons: self.__move_brick_by(1)
 		

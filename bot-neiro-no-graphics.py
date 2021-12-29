@@ -9,13 +9,15 @@ from threading import Thread
 from time import time
 from os.path import join
 from time import time
-
+import argparse
 tetris.GO_DOWN_SCORE = 0.1
-tetris.SET_BRICK_SCORE = 5
+tetris.SET_BRICK_SCORE = 1
 
 CLEAR_LINE = "\x1b[2K"
+parser = argparse.ArgumentParser()
+parser.add_argument('-s','--state',action='store_true',help='generate/load checkpoints')
 
-STATE = True  # True- generate
+STATE = not parser.parse_args().state   # True- generate
 # False - load neat
 
 
@@ -89,7 +91,7 @@ class Bot:
 		# should be 6 outputs
 
 		for i in range(len(outputs)):
-			if outputs[i] > 0.5:
+			if outputs[i] > 0.7:
 				self.button = -1 if i == 0 else i
 
 	# all bot allowed to look
@@ -199,7 +201,6 @@ pickle.dump(win, open(join('neiro','real_winner.pkl'), 'wb'))
 
 
 
-Game(win).run()
 
 
 
