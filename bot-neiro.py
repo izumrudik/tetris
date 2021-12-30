@@ -214,8 +214,8 @@ config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
 							neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
 p = neat.Population(config)
 
-checkpoints = neat.Checkpointer()
-checkpoints.filename_prefix = join("neiro", "checkpoints", "generation - ")
+checkpoints = neat.Checkpointer(1,60,join('.',"neiro", "checkpoints","checkpoint "))
+
 
 if not STATE:
 	p = neat.Checkpointer.restore_checkpoint(
@@ -225,6 +225,7 @@ if not STATE:
 p.add_reporter(neat.StdOutReporter(True))
 stats = neat.StatisticsReporter()
 p.add_reporter(stats)
+p.add_reporter(checkpoints)
 
 generation = 0
 # %%
@@ -362,12 +363,11 @@ def run(genomes, config):
 			#0
 		pygame.display.flip()
 
-	# save
-	checkpoints.save_checkpoint(config, p,None, generation)	
+	
 
 
 # %%
-winner = p.run(run, 100)
+winner = p.run(run, 5000)
 # %%
 checkpoints.save_checkpoint(config, p,None, generation)	
 
