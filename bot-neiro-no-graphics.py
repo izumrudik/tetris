@@ -194,7 +194,7 @@ def run(genomes, config):
 
 
 # %%
-winner = p.run(run, 5000)
+winner = p.run(run, 50000)
 win = p.best_genome
 pickle.dump(winner, open(join('neiro','winner.pkl'), 'wb'))
 pickle.dump(win, open(join('neiro','real_winner.pkl'), 'wb'))

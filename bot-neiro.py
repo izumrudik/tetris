@@ -314,7 +314,7 @@ def run(genomes, config):
 		clock.tick(FPS)
 		for i in pygame.event.get():
 			if i.type == pygame.QUIT:
-				checkpoints.save_checkpoint(config, p, neat.DefaultSpeciesSet(config,stats), p.generation)
+				pass
 
 			if i.type == pygame.VIDEORESIZE:
 				screen_width = screen.get_width()
@@ -367,7 +367,7 @@ def run(genomes, config):
 
 
 # %%
-winner = p.run(run, 5000)
+winner = p.run(run, 50000)
 # %%
 checkpoints.save_checkpoint(config, p,None, generation)	
 
